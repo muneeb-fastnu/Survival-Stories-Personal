@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 700ede5399d9e684f96ac3a1f7335874, type: 3}
+  m_Name: Shikamaru
+  m_EditorClassIdentifier: 
+  StringID: 
+  objectType: 0
+  displayName: Shikamaru
+  info: I need items for a new jutsu.
+  icon: {fileID: 21300000, guid: dc87c4e46fba1d1469a61a0d588473b4, type: 3}
+  prefab: {fileID: 0}
+  stackSize: 0
+  totalTimesInteracted: 0
+  price:
+  - objectData: {fileID: 11400000, guid: 87f91a77dc81b7d4c827e4b25d266e41, type: 2}
+    quantity: 11
+  buildingsAOE: []
+  rewardCurrency: 1
+  rewardAmmount: 42
+  active: 1

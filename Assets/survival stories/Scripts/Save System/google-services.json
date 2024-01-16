@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1046390475413",
+    "firebase_url": "https://survivalstories-game-default-rtdb.firebaseio.com",
+    "project_id": "survivalstories-game",
+    "storage_bucket": "survivalstories-game.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1046390475413:android:71ffc134d217fd50de299c",
+        "android_client_info": {
+          "package_name": "com.survivalstories.game"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1046390475413-o0deq918n6f4sa9ojujs1uv8lk56kdrt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.survivalstories.game",
+            "certificate_hash": "e871f9e0c8e3c2bb3397a7e5c395716c07970e5f"
+          }
+        },
+        {
+          "client_id": "1046390475413-4a7kp5sj1v9ihg56hj1mn41nbq06q9nm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7mjK_w65Ut5vbbLUYWhBWXqa8g0QkjN4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1046390475413-4a7kp5sj1v9ihg56hj1mn41nbq06q9nm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
