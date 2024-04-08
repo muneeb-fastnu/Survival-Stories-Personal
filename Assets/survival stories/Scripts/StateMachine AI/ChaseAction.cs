@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 [CreateAssetMenu(menuName = "AI/Actions/Chase")]
 public class ChaseAction : Actions
@@ -14,7 +15,7 @@ public class ChaseAction : Actions
     public void GoToDestination(StateController controller)
     {
         //Debug.Log("start walking");
-
+        controller.agent.speed = 1.5f;
         if (controller.surroundCheck.EnemiesInTrigger.Count > 0)
         {
             CharacterBehaviour.ChageDirection(controller.transform, controller.target.transform.position);

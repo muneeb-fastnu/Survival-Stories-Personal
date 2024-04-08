@@ -9,6 +9,7 @@ public class BuildingData : CraftableItemData
     public float aoeRange;
     public int maxAllowed;
     public float breakTime;
+    public float originalConstructionTime;
     public float constructionTime;
     public List<SubEffects> aoeEffects;
     public int totalAmmount;

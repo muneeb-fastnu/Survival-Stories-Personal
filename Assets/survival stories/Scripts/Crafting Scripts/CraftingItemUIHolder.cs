@@ -50,7 +50,7 @@ public class CraftingItemUIHolder : MonoBehaviour
                 break;
             }
         }
-        Invoke(nameof(GreyButtonsCheck),0.1f);
+        InvokeRepeating(nameof(GreyButtonsCheck),1f, 5f);
     }
     public void GreyButtonsCheck()
     {
@@ -88,7 +88,8 @@ public class CraftingItemUIHolder : MonoBehaviour
         }
         else if (item.objectType == ObjectType.Building)
         {
-            if (ConstructionSystem.CheckRequirementsForConstruct(item))
+            Debug.Log("grey button object type is building and item is: " + item.displayName);
+            if (GreyButtonCheckForConstruction(item))
             {
                 greyButton.SetActive(false);
                 //Debug.Log("green");
@@ -99,6 +100,37 @@ public class CraftingItemUIHolder : MonoBehaviour
                 //Debug.Log("grey");
             }
         }
+    }
+    public bool GreyButtonCheckForConstruction(CraftableItemData myItem)
+    {
+        bool hasRequiredAmount = true;
+
+        foreach (var _building in InventorySystem.instance._currentDefaults.currentBuildingsInfo)
+        {
+            if (myItem == _building.building && ((BuildingData)item).maxAllowed > _building.currentlyPlaced)
+            {
+                Debug.Log("Building Under observation: " + myItem.displayName);
+                foreach (SubPrice pr in myItem.price)
+                {
+                    Debug.Log("for Building: " + _building.building.StringID + " you need: " + pr.quantity + " " + pr.objectData.displayName);
+                    if(InventorySystem.HasItemWithAmmount(pr.objectData, pr.quantity))
+                    {
+                        Debug.Log("player has amount");
+                    }
+                    else
+                    {
+                        Debug.Log("player doesnt have amount");
+                        return false;
+                    }
+                    
+                }
+                
+            }
+
+
+        }
+
+        return hasRequiredAmount;
     }
     //private void Start()
     //{///i didnt do it here to save memory when game starts  connect button in editor
@@ -285,5 +317,5 @@ public class CraftingItemUIHolder : MonoBehaviour
 
 
     }
-
+    
 }

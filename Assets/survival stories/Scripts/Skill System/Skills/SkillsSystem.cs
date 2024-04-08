@@ -97,8 +97,6 @@ public class SkillsSystem : MonoBehaviour
         {
             Debug.Log("not enough skill Points");
             return false;
-
-
         }
     }
 }

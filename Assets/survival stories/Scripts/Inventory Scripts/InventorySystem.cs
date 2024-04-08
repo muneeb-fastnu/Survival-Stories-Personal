@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using System;
 using System.Reflection;
 using Newtonsoft.Json;
+using Unity.VisualScripting;
 
 //later think about seperating tools and resources to save some computation 
 
@@ -32,6 +33,9 @@ public class InventorySystem : MonoBehaviour, ISaveable
     [JsonIgnore] public ObjectData stone;
     [JsonIgnore] public ObjectData wood;
     [JsonIgnore] public int expandBy;
+    [JsonIgnore] public int toolSize;
+    [JsonIgnore] public int resourceSize;
+    [JsonIgnore] public int consumableSize;
     // use this to save the stuff in the respective slots and cap the total slots for the inventory
 
 
@@ -40,8 +44,11 @@ public class InventorySystem : MonoBehaviour, ISaveable
     /// for inventory UI
     /// </summary>
     /// 
+    [JsonIgnore] public Transform masterContent;   //master
 
-    [JsonIgnore] public Transform inventoryContentHolder;
+    [JsonIgnore] public Transform inventoryContentHolder;   //tools
+    [JsonIgnore] public Transform inventoryContentHolder2;  //resources
+    [JsonIgnore] public Transform inventoryContentHolder3;  //consumables
     [JsonIgnore] public GameObject contentPrefab;
 
 
@@ -53,10 +60,19 @@ public class InventorySystem : MonoBehaviour, ISaveable
 
     public static List<InventoryItem> inventory = new List<InventoryItem>();
     [JsonIgnore] public static List<ItemHolderUi> inventoryUiList = new List<ItemHolderUi>() { };
+
+    [JsonIgnore] public List<ItemHolderUi> inventoryUiListTool = new List<ItemHolderUi>() { };
+    [JsonIgnore] public List<ItemHolderUi> inventoryUiListResource = new List<ItemHolderUi>() { };
+    [JsonIgnore] public List<ItemHolderUi> inventoryUiListConsumable = new List<ItemHolderUi>() { };
+
     [JsonIgnore] private static Dictionary<InventoryItem, ItemHolderUi> itemUIDictionary;
     public static int inventorySize;
+    public int showInventorySize;
     [JsonIgnore] public bool isfull = false;
 
+    public List<InventoryItem> inventoryT = new List<InventoryItem>();
+    public List<ItemHolderUi> inventoryUiListT = new List<ItemHolderUi>() { };
+    private Dictionary<InventoryItem, ItemHolderUi> itemUIDictionaryT;
 
     /// <summary>
     /// event to add resources in the crafting area
@@ -66,17 +82,17 @@ public class InventorySystem : MonoBehaviour, ISaveable
     public delegate void ItemsAdded();
     public static event ItemsAdded itemsEvent;
 
-
+    private void Update()
+    {
+        inventoryT = inventory;
+        inventoryUiListT = inventoryUiList;
+        itemUIDictionaryT = itemUIDictionary;
+    }
     private void OnEnable()
     {
         TempResetSO();
         if (!instance) instance = this;
-        if (GameManager.LoadorNot)
-        {
-            Debug.Log("Starting here at Inventory onEnable");
-
-            LoadData();
-        }
+        
         itemsEvent += SaveData;
     }
     private void Awake()
@@ -84,13 +100,17 @@ public class InventorySystem : MonoBehaviour, ISaveable
 
         //remove later
         ExpandInventory();
+        ExpandInventory();
+        //DeleteLast5Tool();
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
 
         // inventory = new List<InventoryItem>();
         itemDictionary = new Dictionary<InventoryItem, ObjectData>();
 
         itemUIDictionary = new Dictionary<InventoryItem, ItemHolderUi>();
         UpdateInventorySize();
+        
     }
     public void TempResetSO()
     {
@@ -109,7 +129,12 @@ public class InventorySystem : MonoBehaviour, ISaveable
 
     private void Start()
     {
+        //if (GameManager.LoadorNot)
+        {
+            Debug.Log("Starting here at Inventory onEnable");
 
+            LoadData();
+        }
         // RefreshInventory();
     }
     [ContextMenu(" run this and check ")]
@@ -123,9 +148,13 @@ public class InventorySystem : MonoBehaviour, ISaveable
     }
     public void ExpandInventory()
     {
-        inventorySize += expandBy;
+
+        inventorySize += (expandBy*3);
+        showInventorySize = inventorySize;
         UpdateInventorySize();
     }
+    
+    
     public void AddItem(bool item)
     {
         if (item)
@@ -163,18 +192,209 @@ public class InventorySystem : MonoBehaviour, ISaveable
         {
             //   Debug.Log("should have instansiated here");
             // instansaiated n component extracted and then added to list
-            Debug.Log("About to expand inventory");
-            inventoryUiList.Add(Instantiate(contentPrefab, inventoryContentHolder).GetComponent<ItemHolderUi>());
+            inventoryUiList.Add(Instantiate(contentPrefab, masterContent).GetComponent<ItemHolderUi>());
+        }
+        SetUILists();
+        foreach (Transform child in inventoryContentHolder3)
+        {
+            Destroy(child.gameObject);
+        }
+        foreach (ItemHolderUi item in inventoryUiListConsumable)
+        {
+            ItemHolderUi resourceItem = Instantiate(contentPrefab, inventoryContentHolder3).GetComponent<ItemHolderUi>();
+            resourceItem.CopyFrom(item);
+        }
+        
+        foreach (Transform child in inventoryContentHolder2)
+        {
+            Destroy(child.gameObject);
+        }
+        foreach (ItemHolderUi item in inventoryUiListResource)
+        {
+            ItemHolderUi resourceItem = Instantiate(contentPrefab, inventoryContentHolder2).GetComponent<ItemHolderUi>();
+            resourceItem.CopyFrom(item);
         }
 
+        foreach (Transform child in inventoryContentHolder)
+        {
+            Destroy(child.gameObject);
+        }
+        foreach (ItemHolderUi item in inventoryUiListTool)
+        {
+            ItemHolderUi resourceItem = Instantiate(contentPrefab, inventoryContentHolder).GetComponent<ItemHolderUi>();
+            resourceItem.CopyFrom(item);
+        }
+
+
+        //FilterConsumable();
+        //FilterResource();
+        //FilterTool();
         // fo this in the saving part
         //get data from saved place 
         //turn data into inventory data before
         // foreach(inventory)
         // inventory.Add(inventory)
     }
+    public void SetUILists()
+    {
+        int emptyCount = 0;
+        inventoryUiListTool.Clear();
+        inventoryUiListResource.Clear();
+        inventoryUiListConsumable.Clear();
+        foreach (ItemHolderUi item in inventoryUiList)
+        {
+            if (item != null)
+            {
+                if (item.item.data.objectType == ObjectType.Tool)
+                {
+                    inventoryUiListTool.Add(item);
+                }
+                else if (item.item.data.objectType == ObjectType.Resource)
+                {
+                    ResourceData rd = (ResourceData)item.item.data;
+                    if (rd != null)
+                    {
 
+                        if (rd.resourceBehaviour.ToString() == "Gatherable")
+                        {
+                            inventoryUiListResource.Add(item);
+                        }
+                        else if (rd.resourceBehaviour.ToString() == "Gatherable, Consumable")
+                        {
+                            inventoryUiListConsumable.Add(item);
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("Transfer of resource data FAILED");
+                    }
+                }
+                else
+                {
+                    emptyCount++;
+                }
+            }
+        }
+        int eachEmptyCount = emptyCount/3;
+        for(int i = 0; i< eachEmptyCount; i++)
+        {
+            inventoryUiListTool.Add(contentPrefab.GetComponent<ItemHolderUi>());
+            inventoryUiListResource.Add(contentPrefab.GetComponent<ItemHolderUi>());
+            inventoryUiListConsumable.Add(contentPrefab.GetComponent<ItemHolderUi>());
+        }
+    }
 
+    /*
+    public void FilterConsumable()
+    {
+        Debug.Log("Filter Resource Start");
+        foreach (Transform child in inventoryContentHolder3)
+        {
+            ItemHolderUi itemHolderUiScript = child.GetComponent<ItemHolderUi>();
+            Debug.Log("2 Resource: Name: " + itemHolderUiScript.item.data.displayName + " || Type: " + itemHolderUiScript.item.data.objectType);
+            if (itemHolderUiScript != null)
+            {
+                if (itemHolderUiScript.item.data.objectType == ObjectType.Resource || itemHolderUiScript.item.data.objectType == ObjectType.None)
+                {
+                    if (itemHolderUiScript.item.data.objectType == ObjectType.Resource)
+                    {
+                        ResourceData rd = (ResourceData)itemHolderUiScript.item.data;
+                        if(rd != null)
+                        {
+                            bool b;
+                            Debug.Log(itemHolderUiScript.item.data.displayName + " Consumable Behaviour: " + rd.resourceBehaviour);
+
+                            b = rd.resourceBehaviour.ToString() == "Gatherable, Consumable";
+                            Debug.Log("ctf manual resourceBehaviour == Consumable is:: " + b);
+                            if (rd.resourceBehaviour.ToString() == "Gatherable")
+                            {
+                                Destroy(child.gameObject);
+                            }
+                            else
+                            {
+                                
+                            }
+                        }
+                        else
+                        {
+                            Debug.Log("Transfer of resource data FAILED");
+                        }
+                    }
+                }
+                else
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+        }
+        Debug.Log("Filter Resource End");
+
+    }
+    public void FilterResource()
+    {
+        Debug.Log("Filter Resource Start");
+        foreach (Transform child in inventoryContentHolder2)
+        {
+            ItemHolderUi itemHolderUiScript = child.GetComponent<ItemHolderUi>();
+            Debug.Log("2 Resource: Name: " + itemHolderUiScript.item.data.displayName + " || Type: " + itemHolderUiScript.item.data.objectType);
+            if (itemHolderUiScript != null)
+            {
+                if (itemHolderUiScript.item.data.objectType == ObjectType.Resource || itemHolderUiScript.item.data.objectType == ObjectType.None)
+                {
+                    if (itemHolderUiScript.item.data.objectType == ObjectType.Resource)
+                    {
+                        ResourceData rd = (ResourceData)itemHolderUiScript.item.data;
+                        if (rd != null)
+                        {
+                            bool b;
+                            Debug.Log(itemHolderUiScript.item.data.displayName + " Resource Behaviour: " + rd.resourceBehaviour);
+                            
+                            b = rd.resourceBehaviour.ToString() == "Gatherable, Consumable";
+                            Debug.Log("ctf manual resourceBehaviour == Consumable is:: " + b);
+                            if (rd.resourceBehaviour.ToString() == "Gatherable, Consumable")
+                            {
+                                Destroy(child.gameObject);
+                            }
+                        }
+                        else
+                        {
+                            Debug.Log("Transfer of resource data FAILED");
+                        }
+                    }
+                }
+                else
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+        }
+        Debug.Log("Filter Resource End");
+
+    }
+    public void FilterTool()
+    {
+        Debug.Log("Tool Start");
+        foreach (Transform child in inventoryContentHolder)
+        {
+            ItemHolderUi itemHolderUiScript = child.GetComponent<ItemHolderUi>();
+            Debug.Log("1 Tools: Name: " + itemHolderUiScript.item.data.displayName + " || Type: " + itemHolderUiScript.item.data.objectType);
+            if (itemHolderUiScript != null)
+            {
+                if (itemHolderUiScript.item.data.objectType == ObjectType.Tool || itemHolderUiScript.item.data.objectType == ObjectType.None) 
+                {
+                    //Debug.Log("1: tool found: " + itemHolderUiScript.item.data.displayName);
+                    //Destroy(child.gameObject);
+                }
+                else
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+        }
+        Debug.Log("Tool End");
+    }
+    */
+    
     public InventoryItem Get(ObjectData refrenceObject)
     {
         //if (itemDictionary.TryGetValue(refrenceObject, out InventoryItem item))
@@ -205,7 +425,7 @@ public class InventorySystem : MonoBehaviour, ISaveable
         {
             CraftingItemUIHolderManager.instance.CheckGreyButtonsInAllChildren();
         }
-
+        instance.UpdateInventorySize();
     }
     public static void AddInContainer()
     {
@@ -583,6 +803,7 @@ public class InventorySystem : MonoBehaviour, ISaveable
                     inventoryUiList.Remove(holderUi);
                     Destroy(holderUi.gameObject);
                     UpdateInventorySize();
+                    
                     // GameObject uiItem = Instantiate(contentPrefab, inventoryContentHolder);
                     // itemUIDictionary.Add(uiItem.GetComponent<ItemHolderUi>().item, uiItem.GetComponent<ItemHolderUi>());
                 }
@@ -723,8 +944,8 @@ public class InventorySystem : MonoBehaviour, ISaveable
 
         }
 
-        Debug.LogWarning("Asked ammount :" + ammount + " found ammount :" + a);
-        Debug.Log("Asked ammount :" + ammount + " found ammount :" + a);
+        //Debug.LogWarning("Asked ammount :" + ammount + " found ammount :" + a);
+        //Debug.Log("Asked ammount :" + ammount + " found ammount :" + a);
         if (a >= ammount)
         {
             return true;

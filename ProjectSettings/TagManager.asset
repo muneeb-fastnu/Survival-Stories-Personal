@@ -6,6 +6,10 @@ TagManager:
   tags:
   - ItemHolderUIHelper
   - WaterColliders
+  - NewEnemy
+  - Mole
+  - InvNavBtn
+  - hidePanel
   layers:
   - Default
   - TransparentFX

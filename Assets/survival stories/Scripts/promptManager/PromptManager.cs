@@ -61,6 +61,8 @@ public class PromptManager : MonoBehaviour
         Idle30,
         Idle60,
         StaminaRegainedFull,
+        Slide,
+        Sit,
         // Add more prompt types as needed.
     }
     PromptType currentPromptType = PromptType.None;
@@ -571,6 +573,34 @@ public class PromptManager : MonoBehaviour
         SetPromptCooldown(PromptType.Idle60);
 
         TurnOnBubble(PromptType.Idle60);
+
+    }
+    public void PlayerSlided()
+    {
+        currentPromptType = PromptType.Slide;
+
+        if (IsOnCooldown(currentPromptType))
+        {
+            return;
+        }
+        prompt.text = "SLIDED!";
+        SetPromptCooldown(PromptType.None);
+
+        TurnOnBubble(PromptType.Slide);
+
+    }
+    public void SitDown()
+    {
+        currentPromptType = PromptType.Sit;
+
+        if (IsOnCooldown(currentPromptType))
+        {
+            return;
+        }
+        prompt.text = "Sitting Down!";
+        SetPromptCooldown(PromptType.None);
+
+        TurnOnBubble(PromptType.Sit);
 
     }
     //-----------------------------------------------------

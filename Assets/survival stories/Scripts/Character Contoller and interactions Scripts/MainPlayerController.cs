@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,9 +23,21 @@ public class MainPlayerController : MonoBehaviour
     public bool clearListsOnce;
 
     public bool isPlayerAllowedMove = true;
+
+    public Vector3 defaultPlayerLocation = new Vector3(0.5f, 0.65f, 0);
+
+    private float directionChangeDelay = 0.4f; // Adjust the delay time as needed
+    private float lastDirectionChangeTime;
+    private int lastDirection = 0; //0=right, 1=left
+    private int currentDirection; //0=right, 1=left
+
     private void Start()
     {
-
+        //stats.moveSpeed = speed;
+        //if (GameManager.LoadorNot)
+        {
+            Invoke(nameof(LoadData), 0.05f);
+        }
         myCharacterBehaviour = GetComponent<CharacterBehaviour>();
         surroundingCheck = GetComponentInChildren<SurroundingCheck>();
         mainCharaterAnimator = GetComponent<Animator>();
@@ -34,6 +47,7 @@ public class MainPlayerController : MonoBehaviour
         cam = Camera.main;
         InventorySystem.instance._currentDefaults.player = this.gameObject;
         stats = GetComponent<AICharacterBehaviour>().stats;
+        InvokeRepeating(nameof(SaveData), 1, 0.5f);
     }
     private void FixedUpdate()
     {
@@ -103,9 +117,66 @@ public class MainPlayerController : MonoBehaviour
             mainCharaterAnimator.SetBool("walking", false);
             mainCharaterAnimator.SetBool("foraging", false);
         }
+        if (mainCharaterAnimator.GetBool("walking"))
+        {
+            SFXManager.instance.StopWoodChopCoroutine();
+            SFXManager.instance.StopStoneMiningCoroutine();
+            SFXManager.instance.StartWalkGrassCoroutine();
+        }
+        else
+        {
+            SFXManager.instance.StopWalkGrassCoroutine();
+        }
+        if(!mainCharaterAnimator.GetBool("foraging"))
+        {
+            SFXManager.instance.StopWoodChopCoroutine();
+            SFXManager.instance.StopStoneMiningCoroutine();
+        }
     }
 
+    public void SaveData()
+    {
+        string playerPosStr = Vector3ToString(transform.position);
+        PlayerPrefs.SetString("PlayerPosition", playerPosStr);
+    }
+    public void LoadData()
+    {
+        if (PlayerPrefs.HasKey("PlayerPosition"))
+        {
+            string playerPosStr = PlayerPrefs.GetString("PlayerPosition", Vector3ToString(defaultPlayerLocation));
+            transform.position = StringToVector3(playerPosStr);
+        }
+        else
+        {
+            transform.position = defaultPlayerLocation;
+        }
+    }
+    // Convert Vector3 to string
+    public string Vector3ToString(Vector3 vector)
+    {
+        return vector.x + "," + vector.y + "," + vector.z;
+    }
 
+    // Convert string to Vector3
+    public Vector3 StringToVector3(string vectorString)
+    {
+        string[] components = vectorString.Split(',');
+
+        if (components.Length == 3)
+        {
+            float x, y, z;
+
+            if (float.TryParse(components[0], out x) &&
+                float.TryParse(components[1], out y) &&
+                float.TryParse(components[2], out z))
+            {
+                return new Vector3(x, y, z);
+            }
+        }
+
+        // Return a default Vector3 if parsing fails
+        return Vector3.zero;
+    }
     public void MainCharacterMove()
     {
 
@@ -134,10 +205,16 @@ public class MainPlayerController : MonoBehaviour
 
             myCharacterBehaviour.aiChar.CurrentTarget = null;
             inputState = Vector2.ClampMagnitude(inputState, 1.0f);
+
+            
+            
             // Debug.Log(inputState);
             ChangeDirection(inputState);
 
             chracterRb.velocity = inputState.normalized * stats.moveSpeed * Time.deltaTime;
+            
+
+
             // MainCharaterAnimator.SetBool("walking", true);
             // chracterRb.MovePosition(chracterRb.position + inputState.normalized * speed * Time.deltaTime);
         }
@@ -159,7 +236,7 @@ public class MainPlayerController : MonoBehaviour
 
         }
 
-
+        
     }
 
     public void CheckAutoMovementAvailablity()
@@ -168,13 +245,33 @@ public class MainPlayerController : MonoBehaviour
     }
     private void ChangeDirection(Vector2 inputState)
     {
+        
         if (inputState.x < 0)
         {
+            currentDirection = 1;
             chracterRb.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
         }
         else if (inputState.x > 0)
         {
+            currentDirection = 0;
             chracterRb.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        }
+        
+        if (currentDirection != lastDirection)
+        {
+            if (Time.time - lastDirectionChangeTime <= directionChangeDelay)
+            {
+                Debug.Log("Player Slide");
+                PromptManager.Instance.PlayerSlided();
+                //ReduceStamina
+                if(PlayerAttributesSystem.HasEnoughStamina())
+                {
+                    PlayerAttributesSystem.DepleteStamina();
+                }
+                SFXManager.instance.PlaySlide();
+            }
+            lastDirection = currentDirection;
+            lastDirectionChangeTime = Time.time;
         }
     }
 
@@ -193,5 +290,22 @@ public class MainPlayerController : MonoBehaviour
         {
             MapEdgeManager.instance.PlayerTouchedEdge();
         }
+    }
+    public void FollowPlayer()
+    {
+        if (cam == null)
+        {
+            Debug.LogError("Main camera reference not set.");
+            return;
+        }
+
+        // Calculate the target position for the camera to follow the player
+        Vector3 targetPosition = transform.position;
+
+        // Optionally, you can add an offset or modify the target position based on certain conditions
+
+        // Smoothly move the camera towards the target position
+        float smoothSpeed = 5f; // Adjust the smoothness factor as needed
+        cam.transform.position = Vector3.Lerp(cam.transform.position, targetPosition, smoothSpeed * Time.deltaTime);
     }
 }

@@ -13,11 +13,16 @@ public class MarketQuestSystem : MonoBehaviour , ISaveable
     public static event RewardFromQuest questReward;
     private void Start()
     {
-
+        if (GameManager.LoadorNot)
+        {
+            LoadData();
+        }
         questReward += market.updateUI;
         Debug.Log("reward should be shown");
         InvokeRepeating("TimeCheckForAllQuests", 0, 1);
         InvokeRepeating("makeQuest", 0, 100);
+        InvokeRepeating("SaveData", 1, 5);
+        questReward?.Invoke();
     }
 
 
@@ -125,6 +130,7 @@ public class MarketQuestSystem : MonoBehaviour , ISaveable
                 break;
         }
         Debug.Log(Market.chronoCrystals + " " + Market.gold + "gold and crystals");
+        
     }
     public static void GiveReward()
     {
@@ -134,12 +140,12 @@ public class MarketQuestSystem : MonoBehaviour , ISaveable
 
     public void SaveData()
     {
-        throw new NotImplementedException();
+        PlayerPrefs.SetInt("gold", Market.gold);
     }
 
     public void LoadData()
     {
-        throw new NotImplementedException();
+        Market.gold = PlayerPrefs.GetInt("gold", 0);
     }
 }
 

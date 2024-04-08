@@ -15,7 +15,7 @@ public class DayNightCycle : MonoBehaviour
     double midnightTime;
 
     float intensity = 0;
-
+    
     private void Start()
     {
         middayTime = 12 * 60 * 60; // 12 hours * 60 minutes * 60 seconds
@@ -42,7 +42,7 @@ public class DayNightCycle : MonoBehaviour
 
         // Determine whether it's the first half of the day or the second half
         bool isFirstHalf = totalSeconds <= middayTime;
-
+        
         // Calculate the normalized value based on the appropriate time range
         float t = isFirstHalf
             ? Mathf.InverseLerp((float)middayTime, (float)midnightTime, (float)totalSeconds)

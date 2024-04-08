@@ -66,6 +66,27 @@ public class Resource : MonoBehaviour, ISaveable
             }
             else
             {
+                float chance;
+                InventoryItem item = InventorySystem.GetToolForResource(((ResourceData)this.inventoryItem.data).resourcesType);
+                if (inventoryItem.data.StringID.Contains("mushroom"))
+                {
+                    chance = InventorySystem.instance.allItemsLibrary.allTools[0].doubleCraftChance;
+                }
+                else
+                {
+                    chance = ((ToolData)item.data).doubleCraftChance;
+                }
+                if ( chance > 0)
+                {
+
+                    float randomNumber = Random.Range(0.01f, 1.2f);
+                    Debug.Log("double: " + randomNumber + " <= " + chance);
+                    // Check if the random number is less than or equal to the chance value
+                    if (randomNumber <= chance)
+                    {
+                        InventorySystem.AddItem(inventoryItem.data);
+                    }
+                }
                 InventorySystem.AddItem(inventoryItem.data);
 
 

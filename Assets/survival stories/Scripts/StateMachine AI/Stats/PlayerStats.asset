@@ -15,7 +15,7 @@ MonoBehaviour:
   health: {fileID: 11400000, guid: cb42ba423b1a0b84fbada0ef22144402, type: 2}
   characterTraits:
   - {fileID: 11400000, guid: cb42ba423b1a0b84fbada0ef22144402, type: 2}
-  baseAttackDamage: 1
+  baseAttackDamage: 13.60489
   baseForagingSpeed: 1
   moveSpeed: 100
   visionRadius: 1

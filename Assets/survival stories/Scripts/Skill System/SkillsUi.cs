@@ -34,9 +34,19 @@ public class SkillsUi : MonoBehaviour
 
     public void OnCompletion()
     {
+        Debug.Log("OnCompletion: " + skillName.text);
         for (int i = 0; i < skillData.tierLevel; i++)
         {
-
+            Debug.Log("tier: " + i);
+            if (tiers[i] == null)
+            {
+                Debug.Log(" tier[i] is null");
+            }
+            if (unlockIconTier == null)
+            {
+                //Debug.Log(" unlockIconTier is null");
+                unlockIconTier = UIHandler.instance.GetUnlockSkinIcon();
+            }
             //tiers[i].color = Color.green;
             tiers[i].overrideSprite = unlockIconTier.sprite;
         }

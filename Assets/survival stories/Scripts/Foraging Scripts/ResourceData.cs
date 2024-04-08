@@ -8,6 +8,7 @@ public class ResourceData : ObjectData
 
     public ResourcesType resourcesType;
     public ResourceBehaviour resourceBehaviour;
+    public float originalHarvestingSpeed;
     public float harvestingSpeed;
     public float doubleChance;
     [Header("Tools required to gather")]

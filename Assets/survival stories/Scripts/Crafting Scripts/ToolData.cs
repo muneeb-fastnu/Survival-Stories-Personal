@@ -13,6 +13,7 @@ public class ToolData : CraftableItemData
     public int durability;
     public float durabilityLossRate;
     public float doubleCraftChance;
+    public int OriginalHarvestSpeed;
     public int HarvestSpeed;
 
     public ToolType toolType;

@@ -22,4 +22,24 @@ public class Durability : Skill
 
         }
     }
+
+    public override void SetDefaultValues()
+    {
+       
+        foreach (var item in InventorySystem.instance.allItemsLibrary.allTools)
+        {
+            if (item.durabilityLossRate > 0)
+            {
+                item.durabilityLossRate = 1;
+            }
+            else
+            {
+                item.durabilityLossRate = 0;
+            }
+        }
+            // all tools in the game get a durability decrease
+
+
+        
+    }
 }

@@ -29,6 +29,7 @@ MonoBehaviour:
   aoeRange: 0.5
   maxAllowed: 2
   breakTime: 250
+  originalConstructionTime: 5
   constructionTime: 5
   aoeEffects: []
   totalAmmount: 0

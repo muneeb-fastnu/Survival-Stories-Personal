@@ -7,13 +7,14 @@ using Firebase.Extensions;
 using TMPro;
 using UnityEngine.SocialPlatforms;
 using System;
+using System.Data;
+using System.Threading.Tasks;
+using Unity.VisualScripting;
 
 public class FireBaseData : MonoBehaviour
 {
     
     public DatabaseReference reference;
-
-
     public void Initialize()
     {
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
@@ -55,11 +56,12 @@ public class FireBaseData : MonoBehaviour
     public object ReadDirectDatabase(string userId, string dataTitle)
     {
         object result = null;
-
+        Debug.Log("Getting " + dataTitle);
         reference.Child("users").Child(userId).Child(dataTitle).GetValueAsync().ContinueWithOnMainThread(task =>
         {
             if (task.IsCompleted)
             {
+                Debug.Log("Got snapshot");
                 DataSnapshot snapshot = task.Result;
                 object rawData = snapshot.Value;
 
@@ -80,12 +82,13 @@ public class FireBaseData : MonoBehaviour
                     object data = (object)rawData;
                     result = data;
                 }
-                
+                Debug.Log("Result1 is " + result);
                 //Debug.Log("Read data from database:: Title: " + dataTitle + " Data: " + result + " Type: " + dataType);
-                
+
             }
             else if (task.IsFaulted)
             {
+
                 Debug.LogError("Error reading data: " + task.Exception);
                 result = null;
             }
@@ -97,10 +100,127 @@ public class FireBaseData : MonoBehaviour
         }
         else
         {
+            Debug.Log("Result is " + result);
             return result;
         }
     }
+    public Task<object> ReadDirectDatabaseAsync(string userId, string dataTitle)
+    {
+        TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
 
+        Debug.Log("Getting " + dataTitle);
+        reference.Child("users").Child(userId).Child(dataTitle).GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted)
+            {
+                Debug.Log("Got snapshot");
+
+
+                Debug.Log("task.Result: \ntask.Result: " + task.Result + "\ntask.Result.isUnityNull: " + task.Result.IsUnityNull()
+                    + "\ntask.Result.Value:-" + task.Result.Value + "-task.Result.Value == null " );
+                
+                if (task.Result.Value == null)
+                {
+                    Debug.Log("value is null");
+                    tcs.SetResult(null);
+                }
+                else
+                {
+                    Debug.Log("value is NOT null");
+                    DataSnapshot snapshot = task.Result;
+                    Debug.Log("snapshot is: " + snapshot.Value);
+                    object rawData = snapshot.Value;
+
+                    Type dataType = snapshot.Value.GetType();
+
+                    //Debug.Log("Snapshot of " + dataTitle + " is: Type:" + dataType + " Value:" + rawData);
+                    if (dataType == typeof(string))
+                    {
+                        string data = (string)rawData;
+                        tcs.SetResult(data);
+                    }
+                    else if (dataType == typeof(long))
+                    {
+                        long data = (long)rawData;
+                        tcs.SetResult(data);
+                    }
+                    else
+                    {
+                        object data = (object)rawData;
+                        tcs.SetResult(data);
+                    }
+                }
+            }
+            else if (task.IsFaulted)
+            {
+                Debug.LogError("Error reading data: " + task.Exception);
+                tcs.SetResult(null);
+            }
+        });
+
+        return tcs.Task;
+    }
+    public async void ReadTestData()
+    {
+        object result = await ReadDirectDatabaseAsync("896dGp2direZew6A1kwP1DG4zzv2", "Player PRofile Manager");
+        Debug.Log("Player PRofile Manager: " + result);
+
+        result = await ReadDirectDatabaseAsync("896dGp2direZew6A1kwP1DG4zzv2", "gold");
+        Debug.Log("gold: " + result);
+
+        result = await ReadDirectDatabaseAsync("896dGp2direZew6A1kwP1DG4zzv2", "test1");
+        Debug.Log("test2: " + result);
+
+        {
+            /*
+            reference.Child("users").GetValueAsync().ContinueWithOnMainThread(task =>
+            {
+                if (task.IsCompleted)
+                {
+                    Debug.Log("Got snapshot");
+                    DataSnapshot snapshot = task.Result;
+                    var rawData = snapshot.Value;
+
+                    Type dataType = snapshot.Value.GetType();
+
+                    if (dataType == typeof(string))
+                    {
+                        string data = (string)rawData;
+                        result = data;
+                    }
+                    else if (dataType == typeof(long))
+                    {
+                        long data = (long)rawData;
+                        result = data.ToString();
+                    }
+                    else
+                    {
+                        object data = (object)rawData;
+                        result = data.ToString();
+                    }
+                    Debug.Log("Result1 is " + result);
+                    //Debug.Log("Read data from database:: Title: " + dataTitle + " Data: " + result + " Type: " + dataType);
+
+                }
+                else if (task.IsFaulted)
+                {
+
+                    Debug.LogError("Error reading data: " + task.Exception);
+                    result = null;
+                }
+            });
+            */
+        }
+        if (result == null)
+        {
+            
+            Debug.Log("result is null");
+        }
+        else
+        {
+            Debug.Log("Final Result is " + result);
+        }
+    }
     /*
     public void ReadDirectDatabase2<T>(string userId, string dataTitle, Action<T> onComplete)
     {

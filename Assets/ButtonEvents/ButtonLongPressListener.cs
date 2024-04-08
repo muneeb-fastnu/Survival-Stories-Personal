@@ -17,6 +17,7 @@ public class ButtonLongPressListener : MonoBehaviour, IPointerDownHandler, IPoin
     [Tooltip("Hold duration in seconds")]
     [Range(0.3f, 5f)] public float holdDuration = 0.5f;
     public UnityEvent onLongPress;
+    public UnityEvent onShortPress;
 
     private bool isPointerDown = false;
     private bool isLongPressed = false;
@@ -39,9 +40,27 @@ public class ButtonLongPressListener : MonoBehaviour, IPointerDownHandler, IPoin
     }
 
 
-    public void OnPointerUp(PointerEventData eventData) {
+    public void OnPointerUp(PointerEventData eventData)
+    {
         isPointerDown = false;
-        isLongPressed = false;
+        if (!isLongPressed && button.interactable) // Check if it's not a long press and the button is interactable
+        {
+            if (onShortPress != null && onShortPress.GetPersistentEventCount() > 0) // Check if onShortPress event is set
+            {
+                onShortPress.Invoke(); // Invoke the short press event
+            }
+            else
+            {
+                button.onClick?.Invoke(); // Invoke the normal button click event if short press event is not set
+            }
+        }
+        isLongPressed = false; // Reset long press flag
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        // This method is required by the IPointerClickHandler interface
+        // We don't need to implement anything here
     }
 
     private IEnumerator Timer() {

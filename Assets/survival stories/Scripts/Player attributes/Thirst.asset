@@ -22,6 +22,6 @@ MonoBehaviour:
   totalTimesInteracted: 0
   trait: 2
   maxQuantity: 1000
-  currentQuantity: 0
+  currentQuantity: 1000
   ChangePerSecond: -0.5
   effectedTrait: {fileID: 11400000, guid: cb42ba423b1a0b84fbada0ef22144402, type: 2}

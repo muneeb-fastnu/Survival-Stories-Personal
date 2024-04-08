@@ -19,6 +19,7 @@ public class ConstructionSystem : MonoBehaviour, ISaveable
 
 
     public List<Building> allBuildingsHolder = new List<Building>();
+    public List<GameObject> deletedItems = new List<GameObject>();
     [Header("Leave It Empty")]
     List<BuildingsWrapper> listwrapper = new List<BuildingsWrapper>();
     private bool isOverbuilding
@@ -119,13 +120,13 @@ public class ConstructionSystem : MonoBehaviour, ISaveable
     }
     private void Start()
     {
-        if (GameManager.LoadorNot)
+        //if (GameManager.LoadorNot)
         {
 
 
             LoadData();
         }
-        InvokeRepeating("SaveData", 1, 5);
+        InvokeRepeating(nameof(SaveData), 1, 5);
     }
 
     public void Addbuilding(Building build)
@@ -404,7 +405,7 @@ public class ConstructionSystem : MonoBehaviour, ISaveable
     }
     public static bool CheckRequirementsForConstruct(ObjectData item)
     {
-
+        Debug.Log("CheckRequirementsForConstruct: " + item.displayName);
         CraftableItemData craftableItem = (CraftableItemData)item;
         foreach (var _building in InventorySystem.instance._currentDefaults.currentBuildingsInfo)
         {
@@ -576,6 +577,7 @@ public class ConstructionSystem : MonoBehaviour, ISaveable
 
                 bu.PosX = item.gameObject.transform.position.x;
                 bu.PosY = item.gameObject.transform.position.y;
+                bu.mapLvl = MapEdgeManager.GetLevelNum();
 
                 listwrapper.Add(bu);
 
@@ -583,7 +585,7 @@ public class ConstructionSystem : MonoBehaviour, ISaveable
             Debug.Log("reached here without error");
             string str = JsonConvert.SerializeObject(listwrapper);
             Debug.Log("reached here without error 2");
-            PlayerPrefs.SetString("constructionsystem", str);
+            PlayerPrefs.SetString("constructionsystem_" + MapEdgeManager.GetLevelNum(), str);
             listwrapper.Clear();
         }
 
@@ -591,10 +593,14 @@ public class ConstructionSystem : MonoBehaviour, ISaveable
     [ContextMenu("Force Load")]
     public void LoadData()
     {
-        if (PlayerPrefs.HasKey("constructionsystem"))
+        string key = "constructionsystem_" + MapEdgeManager.GetLevelNum();
+        if (PlayerPrefs.HasKey(key))
         {
-            string str = PlayerPrefs.GetString("constructionsystem");
+            string str = PlayerPrefs.GetString(key);
+            Debug.Log(str);
+            Debug.Log("reached here without error4");
             List<BuildingsWrapper> listwrapper = JsonConvert.DeserializeObject<List<BuildingsWrapper>>(str);
+            Debug.Log("reached here without error5");
 
             ReConstructBuildings(listwrapper);
         }
@@ -611,9 +617,9 @@ public class ConstructionSystem : MonoBehaviour, ISaveable
             {
                 if (item.buildingID == item1.StringID)
                 {
-                    if (item.TimeLeft > 10)
+                    if (item.TimeLeft > 10 && item.mapLvl == MapEdgeManager.GetLevelNum())
                     {
-
+                        Debug.Log("constructing from memory: " + item1.displayName);
 
                         GameObject gam = Instantiate(item1.prefab);
                         gam.transform.position = new Vector3(item.PosX, item.PosY);
@@ -653,6 +659,54 @@ public class ConstructionSystem : MonoBehaviour, ISaveable
         }
 
     }
+    public void ClearAllBuildings()
+    {
+        SurroundingCheck surroundingCheck = FindObjectOfType<SurroundingCheck>();
+        surroundingCheck.BuildingsInTrigger.Clear();
+        List<Building> buildingsToRemove = new List<Building>(allBuildingsHolder);
+        foreach (var item in buildingsToRemove)
+        {
+            Debug.Log("deleting" + item.thisBuildingData.displayName);
+            allBuildingsHolder.Remove(item);
+            Debug.Log("deleting... " + item.gameObject.name);
+            item.gameObject.SetActive(false);
+            deletedItems.Add(item.gameObject);
+        }
+        surroundingCheck.BuildingsInTrigger.Clear();
+        DeletefromArr();
+    }
+    public void DeletefromArr()
+    {
+        int count = deletedItems.Count;
+        for(int i = count-1; i > 0; i--)
+        {
+            Debug.Log("Removing..." + i);
+            GameObject go = deletedItems[i];
+            deletedItems.RemoveAt(i);
+            deletedItems.Remove(go);
+            Destroy(go);
+        }
+    }
+
+    public void DeleteBuilding(Building bu)
+    {
+        SurroundingCheck surroundingCheck = FindObjectOfType<SurroundingCheck>();
+        surroundingCheck.BuildingsInTrigger.Clear();
+        foreach (var item in allBuildingsHolder)
+        {
+            if(item.thisBuildingData == bu.thisBuildingData && item.timeToDestroy == bu.timeToDestroy)
+            {
+                Debug.Log("deleting" + item.thisBuildingData.displayName);
+                allBuildingsHolder.Remove(item);
+                Debug.Log("deleting... " + item.gameObject.name);
+                item.gameObject.SetActive(false);
+                deletedItems.Add(item.gameObject);
+                break;
+            }
+        }
+        surroundingCheck.BuildingsInTrigger.Clear();
+        DeletefromArr();
+    }
 }
 
 
@@ -663,7 +717,7 @@ public class BuildingsWrapper
     public float PosX;
     public float PosY;
     public float PosZ;
-
+    public int mapLvl;
 
 
 }

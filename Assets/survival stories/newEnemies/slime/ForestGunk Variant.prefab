@@ -1,0 +1,123 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &3678226028019773270
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 7740235291222370641, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: stats
+      value: 
+      objectReference: {fileID: 11400000, guid: 923a8d53c2bcb974ca1bef5f249b5366, type: 2}
+    - target: {fileID: 7740235291222370641, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: resetTime
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370641, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: healthBarPrefab
+      value: 
+      objectReference: {fileID: 3642233940647436556, guid: fd3688d43e0c48342ad10161333180ef, type: 3}
+    - target: {fileID: 7740235291222370643, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d0c95c2ac3662ca44921fdd8f3476ada, type: 3}
+    - target: {fileID: 7740235291222370643, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_SortingOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370646, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_SpriteTilingProperty.pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370646, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_SpriteTilingProperty.pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370646, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 0.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370646, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 0.51
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370648, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_RootOrder
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370648, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_LocalScale.x
+      value: -0.6666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370648, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.6666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370648, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.6666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370648, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.1200001
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370648, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370648, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370648, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370648, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370648, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370648, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370648, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370648, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370648, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370649, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 59cb147fcf16bc642b5444e2c075c9e7, type: 2}
+    - target: {fileID: 7740235291222370650, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370651, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_Name
+      value: ForestGunk Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740235291222370651, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0051f12642aefc04291bd6863d34f47e, type: 3}

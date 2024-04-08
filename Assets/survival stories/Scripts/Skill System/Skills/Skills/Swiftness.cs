@@ -16,4 +16,12 @@ public class Swiftness : Skill
             stats.moveSpeed = HelperFunctions.IncreaseByPercent(tiers[tierLevel], stats.moveSpeed);
         }
     }
+    public override void SetDefaultValues()
+    {
+        
+        Debug.Log("swiftness");
+        // will impliment with new Ai
+        stats.moveSpeed = 100;
+        
+    }
 }

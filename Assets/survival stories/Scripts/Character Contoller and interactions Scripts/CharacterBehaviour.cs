@@ -59,6 +59,21 @@ public class CharacterBehaviour : MonoBehaviour
             // Set the destination for the NavMesh Agent
             // navMeshAgent.SetDestination(targetPosition);
 
+            if (currentTargetInfo.objectType == ObjectType.Resource)
+            {
+                Resource res = currentTargetInfo.GetComponent<Resource>();
+                if (res != null)
+                {
+                    ResourceData resData = ((ResourceData)res.inventoryItem.data);
+                    if (resData.resourcesType == ResourcesType.water && PlayerAttributesSystem.instance.thirst.currentQuantity > 900)
+                    {
+                        Announcements.instance._slider.gameObject.SetActive(false);
+                        return;
+                    }
+                }
+            }
+
+
             ChageDirection(transform, currentTargetInfo.transform.position);
             navAgent.SetDestination(currentTargetInfo.transform.position);
 
@@ -88,6 +103,7 @@ public class CharacterBehaviour : MonoBehaviour
                 if (mainPlayerController.isPlayerAllowedMove)
                 {
                     mainCharaterAnimator.SetBool("walking", true);
+                    
                 }
                 InteractWithTarget = false;
                 ChageDirection(transform, currentTargetInfo.transform.position);
@@ -113,8 +129,18 @@ public class CharacterBehaviour : MonoBehaviour
                 // interact with enemy in a different way
                 ProcessBuilding();
             }
+            
         }
-
+        if(mainCharaterAnimator.GetBool("walking"))
+        {
+            SFXManager.instance.StopWoodChopCoroutine();
+            SFXManager.instance.StopStoneMiningCoroutine();
+            SFXManager.instance.StartWalkGrassCoroutine();
+        }
+        else
+        {
+            SFXManager.instance.StopWalkGrassCoroutine();
+        }
     }
 
     private void ProcessBuilding()
@@ -274,6 +300,12 @@ public class CharacterBehaviour : MonoBehaviour
                 case ResourcesType.Bush:
 
                     mainCharaterAnimator.SetFloat("foraging float", 0);
+                    
+                    break;
+
+                case ResourcesType.Mushroom:
+
+                    mainCharaterAnimator.SetFloat("foraging float", 0);
 
                     break;
 
@@ -358,7 +390,6 @@ public class CharacterBehaviour : MonoBehaviour
 
     public static void ChageDirection(Transform gam, Vector3 target)
     {
-
         if (target != null && gam!=null)
         {
             //  Vector3 targetDirection = target - transform.position;
@@ -372,21 +403,7 @@ public class CharacterBehaviour : MonoBehaviour
                 gam.eulerAngles = new Vector3(0f, 180f, 0f);
 
             }
-
-            //float angle = Mathf.Atan2(targetDirection.y, targetDirection.x) * Mathf.Rad2Deg;
-
-
-            //if (angle > 90f || angle < -90f)
-            //{
-
-            //}
-            //else
-            //{
-
-            //}
         }
-
-
     }
 
     public void ExecuteAction()

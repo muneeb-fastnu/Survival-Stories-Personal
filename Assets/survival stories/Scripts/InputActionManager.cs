@@ -25,9 +25,6 @@ public class InputActionManager : MonoBehaviour
 
         //  controllerTransform.gameObject.SetActive(false);
 
-
-
-
         //#elif UNITY_ANDROID || UNITY_IOS
         oldUiLocation = controllerTransform.position;
         press.AddBinding("<Mouse>/leftButton");
@@ -39,16 +36,11 @@ public class InputActionManager : MonoBehaviour
 
         InputActionManager.press.Enable();
 
-
-
-
-
         //#endif
     }
 
     private void OnPointerDown(InputAction.CallbackContext ctx)
     {
-
 
         var screenPosition = Vector2.zero;
         if (ctx.control?.device is Pointer pointer)
@@ -62,12 +54,6 @@ public class InputActionManager : MonoBehaviour
         //{
         //    Debug.Log("pointer over UI");
         //}
-
-
-
-
-
-
 
         PointerEventData eventData = new PointerEventData(EventSystem.current);
         eventData.position = screenPosition;

@@ -19,10 +19,11 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 74253134941d3524b896f276e7bb5403, type: 3}
   prefab: {fileID: 0}
   stackSize: 20
-  totalTimesInteracted: 5
+  totalTimesInteracted: 2
   resourcesType: 1
   resourceBehaviour: 2
-  harvestingSpeed: 750
+  originalHarvestingSpeed: 200
+  harvestingSpeed: 25
   doubleChance: 0
   gatheringRequirments: []
   res: []

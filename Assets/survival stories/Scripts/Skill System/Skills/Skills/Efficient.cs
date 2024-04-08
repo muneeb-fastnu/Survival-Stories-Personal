@@ -19,4 +19,8 @@ public class Efficient : Skill
 
         }
     }
+    public override void SetDefaultValues()
+    {
+
+    }
 }

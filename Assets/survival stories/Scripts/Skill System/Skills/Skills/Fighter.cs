@@ -19,4 +19,12 @@ public class Fighter : Skill
 
         }
     }
+
+    public override void SetDefaultValues()
+    {
+        
+        effectedStat.baseAttackDamage = 5;
+
+        
+    }
 }

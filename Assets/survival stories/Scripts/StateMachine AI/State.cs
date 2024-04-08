@@ -25,19 +25,56 @@ public class State : ScriptableObject
 
     public void CheckForTransition(StateController controller)
     {
-
-        foreach (var item in transitions)
+        if (controller.currentState.animationBlendTreeFloat == 0 && controller.enemyType == "Bunny")
         {
-            bool decision = item.decision.Decide(controller);
+            bool decision;
+            decision = transitions[1].decision.Decide(controller);
             if (decision)
             {
-                controller.TransitionToState(item.trueState);
-             
+                controller.TransitionToState(transitions[1].trueState);
+
             }
             else
             {
-                controller.TransitionToState(item.falseState);
-               
+                controller.TransitionToState(transitions[1].falseState);
+
+            }
+        }
+        else
+        {
+            //foreach (var item in transitions)
+            if (controller.currentState.animationBlendTreeFloat == 0)
+            {
+                bool decision;
+                decision = transitions[0].decision.Decide(controller);
+                if (decision)
+                {
+                    controller.TransitionToState(transitions[0].trueState);
+
+                }
+                else
+                {
+                    controller.TransitionToState(transitions[0].falseState);
+
+                }
+            }
+            else
+            {
+                foreach (var item in transitions)
+                {
+                    bool decision;
+                    decision = item.decision.Decide(controller);
+                    if (decision)
+                    {
+                        controller.TransitionToState(item.trueState);
+
+                    }
+                    else
+                    {
+                        controller.TransitionToState(item.falseState);
+
+                    }
+                }
             }
         }
     }

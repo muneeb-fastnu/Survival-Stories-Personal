@@ -17,7 +17,13 @@ public class Woody : Skill
         }
     }
 
-   
+    public override void SetDefaultValues()
+    {
+        if (Unlocked)
+        {
+            effectedData.doubleChance = 0;
+        }
+    }
 
 
 }

@@ -31,7 +31,8 @@ MonoBehaviour:
   durability: 100
   durabilityLossRate: 1
   doubleCraftChance: 0
-  HarvestSpeed: 100
+  OriginalHarvestSpeed: 20
+  HarvestSpeed: 20
   toolType: 1
   useType: 0
   doubleHarvestChance: 0

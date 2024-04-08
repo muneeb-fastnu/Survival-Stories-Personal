@@ -22,7 +22,8 @@ MonoBehaviour:
   totalTimesInteracted: 0
   resourcesType: 1024
   resourceBehaviour: 6
-  harvestingSpeed: 0
+  originalHarvestingSpeed: 0
+  harvestingSpeed: 1
   doubleChance: 0
   gatheringRequirments: []
   res: []

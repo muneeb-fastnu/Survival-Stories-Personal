@@ -130,7 +130,24 @@ public static class ForagingSystem
         ResourceData resData = ((ResourceData)res.inventoryItem.data);
         InventoryItem item = InventorySystem.GetToolForResource(((ResourceData)res.inventoryItem.data).resourcesType);
         //------------------------------ Debug.Log("nom nom 1");
-        if (resData.resourceBehaviour.HasFlag(ResourceBehaviour.Consumable) && DoYouNeedConsumption())
+        if(resData.displayName == "Mushroom")
+        {
+            Debug.Log("mushroom nom nom 2");
+            // stats system consume the resource
+            // make a player statsSystem for this
+            if (GatherThisResource(res, 1))
+            {
+
+                Debug.Log("mushroom nom nom 3");
+                PlayerAttributesSystem.ConsumeResource(res);
+                res.LoseOneStack();
+                PlayerProfileSystem.AddXp(5);
+
+                //KeyPress.instance.TriggerKeyPub();
+            }
+            return true;
+        }
+        else if (resData.resourceBehaviour.HasFlag(ResourceBehaviour.Consumable) && DoYouNeedConsumption() && resData.resourcesType != ResourcesType.Mushroom)
         {
             Debug.Log("nom nom 2");
             // stats system consume the resource
@@ -143,7 +160,11 @@ public static class ForagingSystem
                 res.LoseOneStack();
                 PlayerProfileSystem.AddXp(5);
 
-
+                if (PlayerAttributesSystem.instance.thirst.currentQuantity > 950)
+                {
+                    KeyPress.instance.TriggerKeyPub();
+                }
+                
             }
             return true;
 
@@ -177,12 +198,18 @@ public static class ForagingSystem
             //------------------------------ Debug.Log("nom nom 8");
             if (item == null)
             {
+                if (resData.displayName.Contains("ushro"))
+                {
+                    //SFXManager.instance.StartWoodChopCoroutine();
+                }
                 Debug.Log("nom nom 9");
                 //gather without tool here
+                
                 if (InventorySystem.HasSpaceAfterAdding(res.inventoryItem.data))
                 {
                     if (GatherThisResource(res, 1))
                     {
+
                         Debug.Log("nom nom 10");
                         res.LoseOneStackAndAddInInventory();
                         PlayerProfileSystem.AddXp(5);
@@ -191,7 +218,8 @@ public static class ForagingSystem
                         {
                             InventorySystem.AddItem(resData);
                         }
-
+                        SFXManager.instance.StopWoodChopCoroutine();
+                        //KeyPress.instance.TriggerKeyPub();
                     }
                     return true;
                 }
@@ -205,10 +233,26 @@ public static class ForagingSystem
             {
                 if (InventorySystem.HasSpaceAfterAdding(res.inventoryItem.data))
                 {
+                    Debug.Log("nom nom 8");
+                    if(((ToolData)item.data).res == ResourcesType.wood)
+                    {
+                        SFXManager.instance.StartWoodChopCoroutine();
+                    }
+                    if (((ToolData)item.data).res == ResourcesType.stone)
+                    {
+                        SFXManager.instance.StartStoneMiningCoroutine();
+                    }
+                    
                     if (GatherThisResource(res, ((ToolData)item.data).HarvestSpeed))
                     {
                         Debug.Log("nom nom 11");
                         res.LoseOneStackAndAddInInventory();
+                        
+                        //SFXManager.instance.StopWoodChopCoroutine();
+                        //SFXManager.instance.StopStoneMiningCoroutine();
+
+
+                        
                     }
 
                     //------------------------------ Debug.Log("nom nom 12");
@@ -234,7 +278,7 @@ public static class ForagingSystem
     public static bool DoYouNeedConsumption()
     {
         //hard coded for thirst
-        if (PlayerAttributesSystem.instance.thirst.currentQuantity < 700)
+        if (PlayerAttributesSystem.instance.thirst.currentQuantity < 900)
         {
             return true;
         }

@@ -26,11 +26,12 @@ MonoBehaviour:
   durability: 0
   durabilityLossRate: 0
   doubleCraftChance: 0
+  OriginalHarvestSpeed: 0
   HarvestSpeed: 1
   toolType: -1
   useType: 0
   doubleHarvestChance: 0
-  res: -1
+  res: 2044
   toolEffects: []
   contains:
     data: {fileID: 0}

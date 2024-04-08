@@ -33,7 +33,6 @@ RectTransform:
   m_Children:
   - {fileID: 4897871782268963477}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -57,7 +56,9 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -106,8 +107,17 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 8456498500705878271}
     m_Modifications:
+    - target: {fileID: 631361013556086456, guid: ee51bc6d9a078984ebc0ab0bcd637f24, type: 3}
+      propertyPath: m_Value
+      value: 0.691
+      objectReference: {fileID: 0}
+    - target: {fileID: 631361013556086456, guid: ee51bc6d9a078984ebc0ab0bcd637f24, type: 3}
+      propertyPath: m_Colors.m_ColorMultiplier
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 631361013556086457, guid: ee51bc6d9a078984ebc0ab0bcd637f24, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -138,7 +148,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 631361013556086457, guid: ee51bc6d9a078984ebc0ab0bcd637f24, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -1243.8499
+      value: -929.84973
       objectReference: {fileID: 0}
     - target: {fileID: 631361013556086457, guid: ee51bc6d9a078984ebc0ab0bcd637f24, type: 3}
       propertyPath: m_SizeDelta.y
@@ -174,7 +184,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 631361013556086457, guid: ee51bc6d9a078984ebc0ab0bcd637f24, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 7.9249268
+      value: 164.92487
       objectReference: {fileID: 0}
     - target: {fileID: 631361013556086457, guid: ee51bc6d9a078984ebc0ab0bcd637f24, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -204,11 +214,42 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 631361013638446892, guid: ee51bc6d9a078984ebc0ab0bcd637f24, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 631361013638446895, guid: ee51bc6d9a078984ebc0ab0bcd637f24, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0.6348877
       objectReference: {fileID: 0}
+    - target: {fileID: 631361014588382691, guid: ee51bc6d9a078984ebc0ab0bcd637f24, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 631361014588382691, guid: ee51bc6d9a078984ebc0ab0bcd637f24, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 631361014588382691, guid: ee51bc6d9a078984ebc0ab0bcd637f24, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 631361014588382691, guid: ee51bc6d9a078984ebc0ab0bcd637f24, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 631361014588382691, guid: ee51bc6d9a078984ebc0ab0bcd637f24, type: 3}
+      propertyPath: m_Maskable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 631361014588382691, guid: ee51bc6d9a078984ebc0ab0bcd637f24, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ee51bc6d9a078984ebc0ab0bcd637f24, type: 3}
 --- !u!224 &4897871782268963477 stripped
 RectTransform:

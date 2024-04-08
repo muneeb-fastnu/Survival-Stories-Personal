@@ -16,4 +16,8 @@ public class Stoner : Skill
             effectedData.doubleChance = tiers[tierLevel];
         }
     }
+    public override void SetDefaultValues()
+    {
+        effectedData.doubleChance = 0;
+    }
 }

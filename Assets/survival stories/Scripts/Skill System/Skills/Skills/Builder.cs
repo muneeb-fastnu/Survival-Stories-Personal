@@ -23,4 +23,12 @@ public class Builder : Skill
 
         }
     }
+    public override void SetDefaultValues()
+    {
+        foreach (var item in InventorySystem.instance.allItemsLibrary.allBuildings)
+        {
+
+            item.constructionTime = item.originalConstructionTime;
+        }
+    }
 }

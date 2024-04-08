@@ -129,6 +129,7 @@ public class NPCTutorial : MonoBehaviour
         npcCharacter.SetActive(true);
     }
 
+
     public void AllignNPC()
     {
         npcCharacter.transform.position = new Vector3(mainCharacter.transform.position.x, mainCharacter.transform.position.y + 1.5f, mainCharacter.transform.position.z);

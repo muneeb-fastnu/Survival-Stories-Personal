@@ -16,7 +16,7 @@ public class GamepadInputManager : MonoBehaviour
     /// <summary>
     /// Retrieve current state of analogue stick.
     /// </summary>
-    public Vector2 AnalogueValue { get; private set; }
+    public Vector2 AnalogueValue { get; set; }
 
     /// <summary>
     /// Retrieve state of primary button.

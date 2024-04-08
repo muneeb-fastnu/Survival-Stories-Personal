@@ -29,7 +29,7 @@ public abstract class Skill : ObjectData
     public abstract void ProcessSkill();
 
 
-
+    public abstract void SetDefaultValues();
 
 
 

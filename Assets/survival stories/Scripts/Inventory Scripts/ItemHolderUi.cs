@@ -14,7 +14,6 @@ public class ItemHolderUi : MonoBehaviour
     public InventoryItem item;
     public bool inUse = false;
 
-
     public int currentDurabilityIndex = 0;
 
     private GameObject Tooltip;
@@ -35,7 +34,33 @@ public class ItemHolderUi : MonoBehaviour
         }
 
     }
+    public void CopyFrom(ItemHolderUi otherItem)
+    {
+        // Copy primitive values
+        ItemBackground.color = otherItem.ItemBackground.color;
+        Stacks.text = otherItem.Stacks.text;
+        inUse = otherItem.inUse;
+        currentDurabilityIndex = otherItem.currentDurabilityIndex;
 
+        // Copy references and subscribe to events
+        item = otherItem.item;
+        if (item != null)
+        {
+            item.ValueChanged += HandleStackUpdated;
+            item.data = otherItem.item.data;
+        }
+
+        Tooltip = otherItem.Tooltip;
+        description = otherItem.description;
+        durabilityIndex = otherItem.durabilityIndex;
+
+        itemHolderUIHelper_gameObject = otherItem.itemHolderUIHelper_gameObject;
+        itemHolderUIHelper = otherItem.itemHolderUIHelper;
+
+        durabilityBar.SetDurability(otherItem.GetResourceDurability()/100);
+        UpdateItemDataToUi(otherItem.item);
+        ItemIcon.sprite = otherItem.ItemIcon.sprite;
+    }
     private void Start()
     {
         itemHolderUIHelper_gameObject = GameObject.FindWithTag("ItemHolderUIHelper");
@@ -43,11 +68,46 @@ public class ItemHolderUi : MonoBehaviour
         description = itemHolderUIHelper.description;
         durabilityIndex = itemHolderUIHelper.durability;
         Tooltip = itemHolderUIHelper.Tooltip;
+        if (item.data.objectType != ObjectType.Tool)
+        {
+            durabilityBar.fill.gameObject.SetActive(false);
+        }
+
+        // Find the InvNavBtn gameObject with the tag
+        GameObject invNavBtn = GameObject.FindGameObjectWithTag("InvNavBtn");
+        GameObject hidePanel = GameObject.FindGameObjectWithTag("hidePanel");
+        // Check if the InvNavBtn is found
+        if (invNavBtn != null)
+        {
+            // Get all the children buttons of InvNavBtn
+            Button[] buttons = invNavBtn.GetComponentsInChildren<Button>();
+
+            // Add event listeners to each button
+            foreach (Button button in buttons)
+            {
+                button.onClick.AddListener(TurnOffTooltip);
+            }
+        }
+        else
+        {
+            Debug.Log("InvNavBtn not found with the given tag.");
+        }
+        if (hidePanel != null)
+        {
+            // Get all the children buttons of InvNavBtn
+            Button buttonhp = hidePanel.GetComponent<Button>();
+
+
+            {
+                buttonhp.onClick.AddListener(TurnOffTooltip);
+            }
+        }
+
     }
 
     public void UpdateItemDataToUi(InventoryItem itemToDisplay)
     {
-        Debug.Log("container processed 4");
+        //Debug.Log("container processed 4");
         item = itemToDisplay;
         itemToDisplay.ValueChanged += HandleStackUpdated;
         if (ItemIcon != null)
@@ -255,7 +315,7 @@ public class ItemHolderUi : MonoBehaviour
         CancelInvoke(nameof(TurnOffTooltip));
         Invoke(nameof(TurnOffTooltip), 5);
     }
-    private void TurnOffTooltip()
+    public void TurnOffTooltip()
     {
         Tooltip.SetActive(false);
     }
@@ -267,6 +327,11 @@ public class ItemHolderUi : MonoBehaviour
 
     public void DisplayDurability()
     {
-        durabilityBar.SetDurability(GetResourceDurability()/100);
+        if (item.data.objectType == ObjectType.Tool)
+        {
+            durabilityBar.fill.gameObject.SetActive(true);
+            durabilityBar.SetDurability(GetResourceDurability() / 100);
+        }
     }
+    
 }

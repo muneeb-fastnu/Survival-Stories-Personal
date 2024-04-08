@@ -13,8 +13,13 @@ public class HoveringIconClicked : MonoBehaviour
             switch (currentObject.objectType)
             {
                 case ObjectType.Building:
-                    Destroy(currentObject.gameObject);
-                    gameObject.SetActive(false);
+                    //Destroy(currentObject.gameObject);
+                    if (currentObject.GetComponent<Building>())
+                    {
+                        ConstructionSystem.instance.DeleteBuilding(currentObject.GetComponent<Building>());
+                        gameObject.SetActive(false);
+                        KeyPress.instance.TriggerKeyPub();
+                    }
                     break;
 
             }

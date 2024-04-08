@@ -5,7 +5,7 @@ using UnityEngine;
 public static class CraftingSystem
 {
 
-
+    public static int doubleChance;
 
 
     public static void CraftButtonClicked(ObjectData item)

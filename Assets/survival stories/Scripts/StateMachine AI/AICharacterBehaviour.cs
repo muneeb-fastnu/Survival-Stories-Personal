@@ -20,13 +20,17 @@ public class AICharacterBehaviour : MonoBehaviour
 
     public GameObject healthBarPrefab;
     private bool isHealthOn = false;
-    GameObject healthBar = null;
+    public GameObject healthBar = null;
     private void Awake()
     {
         animator = GetComponent<Animator>();
         currenHealth = stats.health.maxQuantity;
         hbTrigger.hitEvent += GiveDamage;
         originalHealth = currenHealth;
+    }
+    private void Start()
+    {
+        hbTrigger.gameObject.SetActive(alive);
     }
     private void Update()
     {
@@ -39,6 +43,18 @@ public class AICharacterBehaviour : MonoBehaviour
 
             Slider healthBarSlider = healthBar.transform.GetChild(0).GetComponent<Slider>();
             healthBarSlider.value = currentHealthPercentage;
+        }
+        if(NewTutorial.inTutorial && gameObject.tag == "NewEnemy")
+        {
+            gameObject.transform.GetChild(0).GetComponent<SurroundingCheckAction>().EnemiesInTrigger.Clear();
+        }
+        if (!alive)
+        {
+            StateController stateController = GetComponent<StateController>();
+            if (stateController != null)
+            {
+                stateController.agent.isStopped = true;
+            }
         }
     }
     public void GiveDamage(GameObject gam)
@@ -54,6 +70,8 @@ public class AICharacterBehaviour : MonoBehaviour
             PromptManager.Instance.PlayerHurt();
 
             en.stats.health.currentQuantity -= stats.baseAttackDamage;
+            en.currenHealth = en.stats.health.currentQuantity;
+
             if (en.stats.health.currentQuantity <= 0)
             {
                 CurrentTarget = null;
@@ -72,12 +90,26 @@ public class AICharacterBehaviour : MonoBehaviour
             {
                 CraftingSystem.LosingDurability(data, 0);
                 en.currenHealth -= (data.data as ToolData).Damage + stats.baseAttackDamage;
+                SFXManager.instance.PlayWeaponHit();
+                if (alive && en.alive)
+                {
+                    Debug.Log("Cuurent = " + gameObject.name + "  en.->" + en.gameObject.name);
+                    DisplayHealthOnHead();
+                    en.DisplayHealthOnHead();
+                }
             }
             else
             {
+                if (alive && en.alive)
+                {
+                    //Debug.Log("Cuurent = " + gameObject.name + "  en.->" + en.gameObject.name);
+                    DisplayHealthOnHead();
+                    en.DisplayHealthOnHead();
+                }
                 en.currenHealth -= stats.baseAttackDamage;
+                SFXManager.instance.PlayBareHit();
             }
-            if (en.currenHealth > 5 && en.currenHealth < 7)
+            if (en.currenHealth > 4 && en.currenHealth < 8)
             {
                 if (en.gameObject.transform.rotation.y == -180)
                 {
@@ -87,30 +119,59 @@ public class AICharacterBehaviour : MonoBehaviour
                 {
                     StartCoroutine(Knockback(Vector3.left, en));
                 }
+                InventoryItem data2 = InventorySystem.HasSword();
+                if (data2 != null)
+                {
+                    SFXManager.instance.PlayWeaponKB();
+                }
+                else
+                {
+                    SFXManager.instance.PlayBareKB();
+                }
             }
             PromptManager.Instance.EnemyAttacked();
 
             if (en.currenHealth <= 0)
             {
                 CurrentTarget = null;
-                
+                StateController stateController = GetComponent<StateController>();
+                if(stateController != null)
+                {
+                    stateController.surroundCheck.EnemiesInTrigger.Clear();
+                    stateController.surroundCheck.gameObject.SetActive(false);
+                    stateController.agent.speed = 0.001f;
+                }
                 en.Die();
 
             }
         }
 
-        DisplayHealthOnHead();
+        
+        if(isHealthOn && (en.GetComponent<ObjectInfo>().playerType == PlayerType.User))
+        {
+            turnoffhealth = StartCoroutine(TurnOffHealthAfter(1, healthBar));
+        }
     }
+    private Coroutine turnoffhealth;
+    Slider healthBarSlider = null;
     public void DisplayHealthOnHead()
     {
+        if(!alive)
+        {
+            return;
+        }
+        
         float currentHealthPercentage = currenHealth / originalHealth;
-        Slider healthBarSlider = null;
+        
         if (!isHealthOn)
         {
             if (healthBar == null)
             {
+                //Debug.Log("DHOH instantiate before");
+                //Debug.Log("DHOH "+ gameObject.name);
                 //healthBar = Instantiate(healthBarPrefab, new Vector3(transform.position.x, transform.position.y + 10f, transform.position.z), transform.rotation, transform);
                 healthBar = Instantiate(healthBarPrefab, Vector3.zero, Quaternion.identity, transform);
+                //Debug.Log("DHOH instantiate after");
 
                 // Set the position of the loading bar within the Canvas
                 RectTransform loadingBarRect = healthBar.transform.GetChild(0).GetComponent<RectTransform>();
@@ -119,19 +180,20 @@ public class AICharacterBehaviour : MonoBehaviour
             }
             else
             {
+                //Debug.Log("DHOH update");
                 GameObject actualLoading = healthBar.transform.GetChild(0).gameObject;
                 Vector3 screenPos = Camera.main.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + 1.5f, transform.position.z));
                 actualLoading.transform.position = screenPos;
             }
             isHealthOn = true;
             healthBar.SetActive(true);
-            StartCoroutine(TurnOffHealthAfter(3, healthBar));
+            turnoffhealth =  StartCoroutine(TurnOffHealthAfter(1, healthBar));
         }
         if (healthBarSlider == null)
         {
             healthBarSlider = healthBar.transform.GetChild(0).GetComponent<Slider>();
         }
-        Debug.Log("Slider value changed for " + GetComponent<ObjectInfo>().playerType + "  :  " + currentHealthPercentage);
+        //Debug.Log("Slider value changed for " + GetComponent<ObjectInfo>().playerType + "  :  " + currentHealthPercentage);
         healthBarSlider.value = currentHealthPercentage;
         
     }
@@ -140,6 +202,7 @@ public class AICharacterBehaviour : MonoBehaviour
         yield return new WaitForSeconds(seconds);
         healthBar.SetActive(false);
         isHealthOn = false;
+        KeyPress.instance.TriggerKeyPub();
     }
     private float knockbackDistance = 1f;
     private float knockbackDuration = 0.5f;
@@ -177,8 +240,24 @@ public class AICharacterBehaviour : MonoBehaviour
         {
             if (data.objectType == ObjectType.Enemy)
             {
+                InventoryItem swordData = InventorySystem.HasSword();
+                if (swordData != null)
+                {
+                    
+                    SFXManager.instance.PlayWeaponKill();
+                }
+                else
+                {
+                    SFXManager.instance.PlayBareKill();
+                }
+
                 PlayerProfileSystem.AddXp(5);
                 Debug.Log("xp rewarded");
+                if(gameObject.tag == "NewEnemy")
+                {
+
+                    Invoke(nameof(ResetValuesAfterTime), 3f);
+                }
 
             }
             else
@@ -211,6 +290,7 @@ public class AICharacterBehaviour : MonoBehaviour
 
     public void ResetValuesAfterTime()
     {
+        Debug.Log("Turning off character");
         if (gameObject.TryGetComponent<StateController>(out StateController con))
         {
             con.enabled = false;

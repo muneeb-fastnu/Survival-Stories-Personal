@@ -85,7 +85,10 @@ public class SurroundingCheck : MonoBehaviour
                 }
                 else
                 {
-                    EnemiesInTrigger.Remove(EnemiesInTrigger[i]);
+                    Debug.Log("SurC: EiT null 1");
+                    //EnemiesInTrigger.Remove(EnemiesInTrigger[i]);
+                    StartCoroutine(DelayedRemoveEnemy(EnemiesInTrigger[i]));
+                    Debug.Log("SurC: EiT null 2");
                     myCharacterBehaviour.ResetAnimation();
                     return;
                 }
@@ -115,9 +118,9 @@ public class SurroundingCheck : MonoBehaviour
                 if (BuildingsInTrigger[i] != null)
                 {
 
-                    if (BuildingsInTrigger[i].GetComponent<PlacementScript>())
+                    //if (BuildingsInTrigger[i].GetComponent<PlacementScript>())
                     {
-
+                        Debug.Log("Got placement of existing");
 
 
                         float distance = Vector3.Distance(transform.position, BuildingsInTrigger[i].transform.position);
@@ -142,6 +145,7 @@ public class SurroundingCheck : MonoBehaviour
             }
             if (closestObj)
             {
+                Debug.Log("closest building is " + closestObj.GetComponent<Building>().thisBuildingData.displayName);
                 ConstructionSystem.HasEffectedInInventory(closestObj.GetComponent<Building>());
                 if (ConstructionSystem.ShouldPlayerGoToBuilding(closestObj.GetComponent<Building>()))
                 {
@@ -290,7 +294,10 @@ public class SurroundingCheck : MonoBehaviour
                         myCharacterBehaviour.allowed = false;
                         myCharacterBehaviour.currentTargetInfo = null;
                     }
-                    EnemiesInTrigger.Remove(gam);
+                    Debug.Log("SurC: EiT null 3");
+                    //EnemiesInTrigger.Remove(gam);
+                    StartCoroutine(DelayedRemoveEnemy(gam));
+                    Debug.Log("SurC: EiT null 4");
                     break;
             }
 
@@ -298,6 +305,14 @@ public class SurroundingCheck : MonoBehaviour
 
 
         }
+    }
+    private IEnumerator DelayedRemoveEnemy(GameObject enemy)
+    {
+        // Wait for the end of the frame to safely remove the enemy
+        yield return new WaitForEndOfFrame();
+
+        // Remove the enemy from the list
+        EnemiesInTrigger.Remove(enemy);
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -368,7 +383,10 @@ public class SurroundingCheck : MonoBehaviour
                         myCharacterBehaviour.allowed = false;
                         myCharacterBehaviour.currentTargetInfo = null;
                     }
-                    EnemiesInTrigger.Remove(collision.gameObject);
+                    Debug.Log("SurC: EiT null 5");
+                    //EnemiesInTrigger.Remove(collision.gameObject);
+                    StartCoroutine(DelayedRemoveEnemy(collision.gameObject));
+                    Debug.Log("SurC: EiT null 6");
                     break;
             }
 

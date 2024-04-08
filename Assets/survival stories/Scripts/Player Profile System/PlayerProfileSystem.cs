@@ -13,7 +13,7 @@ public class PlayerProfileSystem : MonoBehaviour, ISaveable
     public static int playerXpCap = 20; //20
     public static int playerLevel = 0;
     [JsonIgnore] public static DateTime totalTimePassed;
-    public static float totalSecondsPassed;
+    public static float totalSecondsPassed = 0;
     [JsonIgnore] public TextMeshProUGUI timeDisplay;
     [JsonIgnore] public TextMeshProUGUI xpDisplay;
 
@@ -36,19 +36,35 @@ public class PlayerProfileSystem : MonoBehaviour, ISaveable
     {
         if (GameManager.LoadorNot)
         {
-
-
             LoadData();
         }
+        DateTime targetDate = new DateTime(2024, 2, 14, 0, 0, 0);
+        if (totalTimePassed == DateTime.MinValue)
+        {
+            Debug.Log("Time changed cuz MinValue");
+            totalTimePassed = DateTime.Now; // Record the start time
+        }
+        if (totalTimePassed < targetDate)
+        {
+            Debug.Log("Time changed cuz target");
+            totalTimePassed = DateTime.Now; // Record the start time
+        }
+
+        TimeSpan timeDifference = DateTime.Now - totalTimePassed;
+
+        double totalSeconds = timeDifference.TotalSeconds;
+        float myElapsedTime = (float)totalSeconds;
+        Debug.Log("Time:\nTarget Date: " + targetDate + "\nTotal Time Passed: " + totalTimePassed + "\nDifference: " + myElapsedTime);
+
         XPGainEvent += PlayerGainXP;
-        startTime = Time.time; // Record the start time
+        
         StartCoroutine(UpdateTimeCoroutine());
 
         DisplayLevel();
         xpSlider.value = HelperFunctions.Remap(playerXp, 0, playerXpCap, 0, 1);
         xpSlider2.value = HelperFunctions.Remap(playerXp, 0, playerXpCap, 0, 1);
 
-
+        InvokeRepeating(nameof(SaveData), 1, 5);
     }
     public void PlayerGainXP(int ammount)
     {
@@ -70,7 +86,10 @@ public class PlayerProfileSystem : MonoBehaviour, ISaveable
     }
     public void TotalTimeSpent()
     {
+        TimeSpan timeDifference = DateTime.Now - totalTimePassed;
 
+        double totalSeconds = timeDifference.TotalSeconds;
+        float myElapsedTime = (float)totalSeconds;
     }
     public void LevelUpPlayer(int remainingXp)
     {
@@ -80,6 +99,7 @@ public class PlayerProfileSystem : MonoBehaviour, ISaveable
         playerXp = 0;
         playerXp += Mathf.Abs(remainingXp);
         Announcements.instance.PlayAnimation("LEVEL UP!", AnnouncementType.withoutImage);
+        SFXManager.instance.PlayLevelUp();
         playerXpCap = (int)HelperFunctions.IncreaseByPercent(5, playerXpCap);
         xpSlider.value = HelperFunctions.Remap(playerXp, 0, playerXpCap, 0, 1);
         xpSlider2.value = HelperFunctions.Remap(playerXp, 0, playerXpCap, 0, 1);
@@ -108,25 +128,18 @@ public class PlayerProfileSystem : MonoBehaviour, ISaveable
         timeDisplay.text = totalTimePassed.ToString();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     private IEnumerator UpdateTimeCoroutine()
     {
         while (true)
         {
-            float elapsedTime = Time.time - startTime;
+            TimeSpan timeDifference = DateTime.Now - totalTimePassed;
+
+            double totalSeconds = timeDifference.TotalSeconds;
+            float elapsedTime = (float)totalSeconds;
+            
             UpdateTimeText(elapsedTime);
+
+            totalSecondsPassed = elapsedTime;
             yield return null; // Wait for the next frame
         }
     }
@@ -153,7 +166,7 @@ public class PlayerProfileSystem : MonoBehaviour, ISaveable
         profileWrapper.playerLevelSave = playerLevel;
         profileWrapper.playerXpCapSave = playerXpCap;
         profileWrapper.playerXpSave = playerXp;
-        profileWrapper.totalSecondsPassedSave = totalSecondsPassed;
+        profileWrapper.playerStartTime = totalTimePassed;
         string st = JsonConvert.SerializeObject(profileWrapper);
         PlayerPrefs.SetString(gameObject.name, st);
 
@@ -169,6 +182,7 @@ public class PlayerProfileSystem : MonoBehaviour, ISaveable
             playerLevel = profileWrapper.playerLevelSave;
             playerXpCap = profileWrapper.playerXpCapSave;
             playerXp = profileWrapper.playerXpSave;
+            totalTimePassed = profileWrapper.playerStartTime;
 
         }
     }
@@ -179,6 +193,7 @@ public class ProfileWrapper
     public int playerXpSave;
     public int playerXpCapSave;
     public int playerLevelSave;
-    public float totalSecondsPassedSave;
+    //public float totalSecondsPassedSave;
+    public DateTime playerStartTime;
 }
 

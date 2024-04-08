@@ -24,4 +24,10 @@ public class LongRange : Skill
 
         }
     }
+    public override void SetDefaultValues()
+    {
+
+    }
+    
+
 }

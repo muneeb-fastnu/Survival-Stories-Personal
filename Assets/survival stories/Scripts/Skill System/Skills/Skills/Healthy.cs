@@ -21,4 +21,8 @@ public class Healthy : Skill
 
         }
     }
+    public override void SetDefaultValues()
+    {
+
+    }
 }

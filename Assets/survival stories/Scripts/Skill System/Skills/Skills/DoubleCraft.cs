@@ -20,4 +20,12 @@ public class DoubleCraft : Skill
 
         }
     }
+
+    public override void SetDefaultValues()
+    {
+        foreach (var item in InventorySystem.instance.allItemsLibrary.allTools)
+        {
+            item.doubleCraftChance = 0;
+        }
+    }
 }

@@ -57,18 +57,19 @@ public class TutorialManager : MonoBehaviour
     {
         buttonCount = 0;
         // Add a listener to the button click event
-        OKbutton.onClick.AddListener(OnButtonClick);
+        //OKbutton.onClick.AddListener(OnButtonClick);
 
         // Update the count text
-        UpdateCountText();
+        //UpdateCountText();
 
         // Enable the button initially
-        EnableButton();
-        hasPlayedTutorial = PlayerPrefs.GetInt("HasPlayedTutorial", 0);
-        
+        //EnableButton();
+
+        //hasPlayedTutorial = PlayerPrefs.GetInt("HasPlayedTutorial", 0);
+        Debug.Log("HasPlayedTutorial script start");
         if (hasPlayedTutorial == 0)
         {
-            StartTutorial();
+            //StartTutorial();
         }
         else
         {
